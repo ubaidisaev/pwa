@@ -8,6 +8,9 @@
     "theme_color": "#2f3d58",
     "orientation": "any",
     "display": "standalone",
+    "display_override": [
+        "window-controls-overlay"
+    ],
     "icons": [
         {
             "src": "/icon512.png",
