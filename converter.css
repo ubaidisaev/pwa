@@ -10,8 +10,7 @@ html {
   }
   
   body {
-    display: grid;
-    place-items: center;
+    text-align: center;
   }
   
   #converter {
