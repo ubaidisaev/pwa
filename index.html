@@ -2,73 +2,152 @@
 <html lang="en-US" dir="ltr">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="converter.css">
-    <meta name="theme-color" content="#f3f3f3" />
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="converter.css">
+  <meta name="theme-color" content="#f3f3f3" />
 
-    <link rel="apple-touch-icon" sizes="72x72" href="icons/icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="icons/icon-96x96.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="icons/icon-128x128.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-128x128.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="icons/icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="icons/icon-96x96.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="icons/icon-128x128.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-128x128.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+  <script src="https://www.youtube.com/iframe_api"></script>
 
-    <title>Arabic Language</title>
+  <title>Arabic Language</title>
 
 
-    <style>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      background-color: #1f1f28;
+    }
 
-        body {
-            display: flex;
-            flex-direction: column;
-            background-color: #1f1f28;
-        }
+    .subtitles {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      background-color: #1f1f28;
+      color: #fff;
+    }
 
-        .subtitles {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            background-color: #1f1f28;
-            color: #fff;
-        }
+    .lang {
+      padding-top: 15px;
+      flex: 1;
+    }
 
-        .lang {
-          padding-top: 15px;
-          flex: 1;
-        }
-
-        .line {
-          background-color: #ffffff70;
-          width: 100%;
-          height: 2px;
-          margin: 10px 0;
-        }
-    </style>
+    .line {
+      background-color: #ffffff70;
+      width: 100%;
+      height: 2px;
+      margin: 10px 0;
+    }
+  </style>
 </head>
 
 <body>
-    <iframe width="100%" height="300" src="https://www.youtube.com/embed/ZVpCiHNZ7hQ?si=5iV-2PVQ3ojtm9Tx"
-        title="YouTube video player" frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  <div id="player"></div>
+  <!-- <iframe width="100%" height="250" src="https://www.youtube.com/embed/ZVpCiHNZ7hQ?si=5iV-2PVQ3ojtm9Tx"
+    title="YouTube video player" frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"></iframe> -->
 
-    <div class="subtitles">
-        <div class="lang">
-          Мира вам, давайте изучать арабский язык.
-        </div>
-        <div class="line"></div>
-        <div class="lang">
-          Let's go to learn arabic language
-        </div>
+  <div class="subtitles" id="app">
+  </div>
+
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="data.js"></script>
+
+  <script>
+
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        console.log("Video is playing");
+      } else if (event.data == YT.PlayerState.PAUSED) {
+        console.log("Video is paused");
+      }
+      // Add additional states as needed
+    }
+
+    const app = Vue.createApp({
+      setup() {
+        const message = Vue.ref('Hello vue!')
+        return {
+          message,
+        }
+      },
+      data() {
+        return {
+          data: data,
+          currentScreen: null,
+          // currentTime,
+        }
+      },
+      mounted() {
+        const slef = this;
+        const onYouTubeIframeAPIReady = async () => {
+          await new Promise(r => setTimeout(r, 1000));
+          this.player = new YT.Player('player', {
+            height: '250',
+            width: '100%',
+            videoId: 'ZVpCiHNZ7hQ',
+            playerVars: {
+              playersinline: 1,
+              autoplay: 0,
+              controls: 1,
+            },
+            events: {
+              'onReady': this.onPlayerReady,
+              // onStateChange: onPlayerStateChange,
+            }
+          });
+        };
+        onYouTubeIframeAPIReady();
+      },
+      methods: {
+        onPlayerReady(event) {
+          // Start listening for playback time updates every second
+          let oldItem = {};
+          setInterval(() => {
+            var currentTime = this.player.getCurrentTime();
+            let item = data.find((item) => (item.offset + item.duration) > currentTime);
+            if (JSON.stringify(item) === JSON.stringify(oldItem)) {
+              return;
+            } else {
+              console.log('item', item, currentTime);
+              this.currentScreen = item;
+              oldItem = item;
+            }
+
+
+          }, 1000);
+        }
+      },
+      template: `
+      <div class="lang" v-if="currentScreen">
+      {{currentScreen.text}}
     </div>
+    <div class="line"></div>
+    <div class="lang">
+      Let's go to learn arabic language
+    </div>
+      
+  `,
+    });
 
 
 
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    app.mount('#app')
+
+
+
+  </script>
 </body>
 
 </html>
