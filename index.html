@@ -71,8 +71,8 @@
 
     /* player */
     .ytp-chrome-top.ytp-show-cards-title {
-      display: none;
-    }
+        display: none;
+    } 
   </style>
 </head>
 
@@ -132,6 +132,7 @@
           });
         };
         onYouTubeIframeAPIReady();
+
       },
       methods: {
         onPlayerStateChange(event) {
@@ -143,6 +144,12 @@
           // Add additional states as needed
         },
         onPlayerReady(event) {
+          // console.log(this.player.g.querySelector('.ytp-chrome-top.ytp-show-cards-title'))
+          try {
+            const root = this.player.g.contentDocument || this.player.g.contentWindow.document;
+            const rootElement = iframeDocument.documentElement;
+            console.log('rootElement', rootElement)
+          } catch(err){console.log('iframe error', err)}
           // Start listening for playback time updates every second
           let oldItem = {};
           setInterval(() => {
