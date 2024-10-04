@@ -73,10 +73,45 @@
     .ytp-chrome-top.ytp-show-cards-title {
         display: none;
     } 
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .loading:after {
+      content: '';
+      display: block;
+      width: 100px;
+      height: 100px;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMNyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAxMDAgMTAwIiB4bWw6c3BhY2U9InByZXNlcnZlIj4KIDxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0zMS42LDMuNUM1LjksMTMuNi02LjYsNDIuNywzLjUsNjguNGMxMC4xLDI1LjcsMzkuMiwzOC4zLDY0LjksMjguMWwtMy4xLTcuOWMtMjEuMyw4LjQtNDUuNC0yLTUzLjgtMjMuMwogIGMtOC40LTIxLjMsMi00NS40LDIzLjMtNTMuOEwzMS42LDMuNXoiPgogICAgICA8YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIGF0dHJpYnV0ZVR5cGU9IlhNTCIgdHlwZT0icm90YXRlIiBkdXI9IjJzIiBmcm9tPSIwIDUwIDUwIiB0bz0iMzYwIDUwIDUwIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSI+PC9hbmltYXRlVHJhbnNmb3JtPgogIDwvcGF0aD4KIDxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik00Mi4zLDM5LjZjNS43LTQuMywxMy45LTMuMSwxOC4xLDIuN2M0LjMsNS43LDMuMSwxMy45LTIuNywxOC4xbDQuMSw1LjVjOC44LTYuNSwxMC42LTE5LDQuMS0yNy43CiAgYy02LjUtOC44LTE5LTEwLjYtMjcuNy00LjFMNDIuMywzOS42eiI+CiAgICAgIDxhbmltYXRlVHJhbnNmb3JtIGF0dHJpYnV0ZU5hbWU9InRyYW5zZm9ybSIgYXR0cmlidXRlVHlwZT0iWE1MIiB0eXBlPSJyb3RhdGUiIGR1cj0iMXMiIGZyb209IjAgNTAgNTAiIHRvPSItMzYwIDUwIDUwIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSI+PC9hbmltYXRlVHJhbnNmb3JtPgogIDwvcGF0aD4KIDxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik04MiwzNS43Qzc0LjEsMTgsNTMuNCwxMC4xLDM1LjcsMThTMTAuMSw0Ni42LDE4LDY0LjNsNy42LTMuNGMtNi0xMy41LDAtMjkuMywxMy41LTM1LjNzMjkuMywwLDM1LjMsMTMuNQogIEw4MiwzNS43eiI+CiAgICAgIDxhbmltYXRlVHJhbnNmb3JtIGF0dHJpYnV0ZU5hbWU9InRyYW5zZm9ybSIgYXR0cmlidXRlVHlwZT0iWE1MIiB0eXBlPSJyb3RhdGUiIGR1cj0iMnMiIGZyb209IjAgNTAgNTAiIHRvPSIzNjAgNTAgNTAiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIj48L2FuaW1hdGVUcmFuc2Zvcm0+CiAgPC9wYXRoPgo8L3N2Zz4=");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 50px;
+      z-index: 10;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      margin: auto;
+    }
+
+    .loading:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #1f1f28;
+      z-index: 5;
+    }
   </style>
 </head>
 
-<body>
+<body class="loading">
 
 
   <div id="player"></div>
@@ -109,6 +144,7 @@
           data: data,
           currentScreen: null,
           playerState: 0,
+          loading: true,
           // currentTime,
         }
       },
@@ -144,6 +180,7 @@
           // Add additional states as needed
         },
         onPlayerReady(event) {
+          document.body.classList.remove('loading');
           // console.log(this.player.g.querySelector('.ytp-chrome-top.ytp-show-cards-title'))
           try {
             const root = this.player.g.contentDocument || this.player.g.contentWindow.document;
@@ -168,6 +205,7 @@
         }
       },
       template: `
+      <div class='main' v-if="!loading">
       <div class="lang" v-if="currentScreen">
       {{currentScreen.text}}
     </div>
@@ -180,6 +218,7 @@
       <svg v-if="playerState === 1" class="icon" viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><g transform="translate(20 16)" fill="currentColor" fill-rule="evenodd"><rect width="16" height="56" rx="2"></rect><rect x="32" width="16" height="56" rx="2"></rect></g></svg>
     
       <svg v-else class="icon" viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg"><path d="M68.255 40.695 28.957 12.83C26.087 10.795 22 12.736 22 16.133v55.733c0 3.397 4.087 5.34 6.957 3.305l39.298-27.867c2.327-1.65 2.327-4.96 0-6.609" fill="currentColor" fill-rule="evenodd"></path></svg>
+    </div>
     </div>
       
   `,
