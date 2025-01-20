@@ -126,13 +126,12 @@
 
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/vue-router@4.5.0/dist/vue-router.global.js"></script>
   <script src="data.js"></script>
 
   <script>
 
-
-
-    const app = Vue.createApp({
+    const Home = {
       setup() {
         const message = Vue.ref('Hello vue!')
         return {
@@ -222,11 +221,25 @@
     </div>
       
   `,
-    });
+    };
+
+    const About = { template: '<h1>About page</h1>' }
+
+    const routes = [
+  { path: '/', component: Home },
+  { path: '/about', component: About }
+]
+
+
+  const router = new VueRouter({
+    routes // сокращённая запись для `routes: routes`
+  })
+
+  const app = Vue.createApp({router});
 
 
 
-    app.mount('#app')
+  app.mount('#app')
 
 
 
