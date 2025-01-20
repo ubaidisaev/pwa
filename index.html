@@ -232,7 +232,8 @@
 
 
   const router = new VueRouter.createRouter({
-    routes // сокращённая запись для `routes: routes`
+    routes, // сокращённая запись для `routes: routes`,
+    history: VueRouter.createMemoryHistory()
   })
 
   const app = Vue.createApp({router});
